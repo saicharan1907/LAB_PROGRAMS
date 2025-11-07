@@ -1,0 +1,18 @@
+@relation student
+
+@attribute cgpa numeric
+@attribute attendance numeric
+@attribute studyhours numeric
+@attribute joboffer {Yes,No}
+
+@data
+9,90,6,Yes
+8,85,5,Yes
+7,70,3,No
+6,65,2,No
+8,88,4,Yes
+5,60,1,No
+9,92,7,Yes
+7,75,3,No
+6,55,2,No
+8,80,4,Yes
