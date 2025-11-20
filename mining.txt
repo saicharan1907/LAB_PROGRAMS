@@ -1,0 +1,152 @@
+Week 9c
+
+claimants<-read.csv("C:/Users/student/Desktop/5AX/claimants.csv")
+sum(is.na(claimants))
+claimants<-na.omit(claimants)
+logit<-glm(ATTORNEY~factor(CLMSEX)+factor(CLMINSUR)+factor(SEATBELT)+CLMAGE+LOSS,family = "binomial",data=claimants)
+summary(logit)
+prob=predict(logit,type=c("response"),claimants)
+prob
+con<-table(prob>0.5,claimants$ATTORNEY)
+con
+acc=sum(diag(con)/sum(con))
+acc
+install.packages("ROCR")
+install.packages("pROC")
+library(ROCR)
+library(pROC)
+rocrp<-prediction(prob,claimants$ATTORNEY)
+rocrf<-performance(rocrp,'tpr','fpr')
+plot(rocrf,colorize=T,text.adj=c(-0.2,1.7))
+auc<-auc(claimants$ATTORNEY)
+auc
+
+
+week 10
+10a
+snowfall<- c(630.4, 911.5, 683.5, 790, 1170.8, 860.1, 1330.6, 996.6, 783.2, 982, 881.8, 1021)
+snowfall_timeseries <- ts(snowfall, start= c(2023,1), frequency=8)
+print(snowfall_timeseries)
+png(file="snowfall.png")
+plot(snowfall_timeseries)
+dev.off()
+
+
+10b
+xvalues <- c(-1.6, 2.1, 2, 2.23, 3.71, 3.25, 3.4, 3.86, -1.19, 2.21)
+yvalues <- c(5.19,7.43, 6.94, 8.11, 18.75, 14.88, 16.06, 19.12, 3.21, 7.58)
+png(file="nls.png")
+plot(xvalues,yvalues)
+model <- nls(yvalues ~ b1*xvalues^2+b2, start=list(b1=1,b2=3))
+model
+new.data <- data.frame(xvalues= seq(min(xvalues),max(xvalues),len=100))
+lines(new.data$xvalues, predict(model,newdata=new.data))
+dev.off()
+print(sum(resid(model)^2))
+print(confint(model))
+
+10 c
+#Data Load
+data("iris")
+#Install the required packages
+install.packages("caret")
+install.packages("C50")
+#Library invoke
+library(caret)
+library(C50)
+#To make the results consistent across the runs
+set.seed(7)
+#Data Partition
+inTraininglocal<-createDataPartition(iris$Species,p=.70,list = F)
+inTraininglocal
+training<-iris[inTraininglocal,]
+testing<-iris[-inTraininglocal,]
+
+#Model Building
+model<-C5.0(Species~.,data = training) 
+#Generate the model summary
+summary(model)
+#Predict for test data set
+pred<-predict.C5.0(model,testing[,-5]) #type ="prob"
+pred
+#Accuracy of the algorithm
+a<-table(testing$Species,pred)
+sum(diag(a))/sum(a)
+#Visualize the decision tree
+plot(model)
+
+week 11
+11a
+Dnorm:
+x<- seq(-10,10, by= .1)
+y<-dnorm(x, mean=2.5, sd=0.5)
+png(file="dnorm.png")
+plot(x,y)
+dev.off()
+
+pnorm:
+x <- seq(-10,10,by= .2)
+y <- pnorm(x,mean=2.5, sd=2)
+png(file="pnorm.png")
+plot(x,y)
+dev.off()
+
+qnorm:
+x <- seq(0,1,by= 0.02)
+y <- qnorm(x,mean=2, sd=1)
+png(file="qnorm.png")
+plot(x,y)
+dev.off()
+
+rnorm:
+y<- rnorm(50)
+png(file="rnorm.png")
+hist(y,main="Normal Distribution")
+dev.off()
+
+11b
+Dbinom:
+x<-seq(0, 50, by=1)
+y<- dbinom(x,50,0.5)
+png(file="dbinom.png")
+plot(x,y)
+dev.off()
+
+pbinom:
+x<- pbinom(26,51,0.35)
+plot(x)
+print(x)
+
+qbinom:
+x<- qbinom(0.25, 51, 1/2)
+print(x)
+plot(x)
+
+rbinom:
+x<- rbinom(8,150, .4)
+print(x)
+plot(x)
+
+week 12
+chi square:
+library("MASS")
+print(str(Cars93))
+car_data<- data.frame(Cars93$AirBags, Cars93$Type)
+car_data = table(Cars93$AirBags, Cars93$Type)
+print(car_data)
+smoothScatter(car_data)
+print(chisq.test(car_data))
+
+t-test:
+x<- c(12,15,14,10,13,15)
+y<-c(14,18,13,16,17,19)
+t_test_result <-t.test(x,y)
+print(t_test_result)
+boxplot(x,y,names=c("Group X", "Group Y"), main="T-Test Comparision", col=c("skyblue","lightgreen"))
+
+f-test:
+x<- c(12,15,14,10,13,15)
+y<-c(14,18,13,16,17,19)
+f_test_result <-var.test(x,y)
+print(f_test_result)
+boxplot(x,y,names=c("Group X", "Group Y"), main="F-Test: Variance Comparision", col=c("lightblue","lightgreen"))
